@@ -96,29 +96,121 @@
           var timeElement = document.getElementById('time');
           if (timeElement && timeElement.innerHTML === 'Loading countdown...') {
             console.log('Countdown not working, applying fallback');
-            // Simple fallback countdown
-            var countDownDate = new Date("Mar 11, 2025 20:00:00").getTime();
+            
+            // Use the same date calculation as the main script
+            var weddingDate = new Date();
+            weddingDate.setUTCFullYear(2025);
+            weddingDate.setUTCMonth(2); // March is 2 (zero-based)
+            weddingDate.setUTCDate(11);
+            weddingDate.setUTCHours(14, 30, 0, 0); // Convert 8:00 PM IST to UTC (UTC+5:30)
+            var countDownDate = weddingDate.getTime();
+            
+            console.log("Fallback countdown initialized for:", new Date(countDownDate).toUTCString());
+            console.log("Days until wedding (fallback):", Math.floor((countDownDate - new Date().getTime()) / (1000 * 60 * 60 * 24)));
+            
+            // Create flip clock HTML structure
+            function createFlipClock() {
+                return `<div class="flip-clock">
+                    <div class="flip-unit-container">
+                        <div class="flip-unit" id="days-tens">
+                            <div class="digit">0</div>
+                        </div>
+                        <div class="flip-unit" id="days-ones">
+                            <div class="digit">0</div>
+                        </div>
+                        <div class="unit-label">days</div>
+                    </div>
+                    <div class="time-separator">:</div>
+                    <div class="flip-unit-container">
+                        <div class="flip-unit" id="hours-tens">
+                            <div class="digit">0</div>
+                        </div>
+                        <div class="flip-unit" id="hours-ones">
+                            <div class="digit">0</div>
+                        </div>
+                        <div class="unit-label">hours</div>
+                    </div>
+                    <div class="time-separator">:</div>
+                    <div class="flip-unit-container">
+                        <div class="flip-unit" id="minutes-tens">
+                            <div class="digit">0</div>
+                        </div>
+                        <div class="flip-unit" id="minutes-ones">
+                            <div class="digit">0</div>
+                        </div>
+                        <div class="unit-label">min</div>
+                    </div>
+                    <div class="time-separator">:</div>
+                    <div class="flip-unit-container">
+                        <div class="flip-unit" id="seconds-tens">
+                            <div class="digit">0</div>
+                        </div>
+                        <div class="flip-unit" id="seconds-ones">
+                            <div class="digit">0</div>
+                        </div>
+                        <div class="unit-label">sec</div>
+                    </div>
+                </div>`;
+            }
+            
+            // Initialize flip clock
+            timeElement.innerHTML = createFlipClock();
             
             function updateCountdown() {
               var now = new Date().getTime();
               var distance = countDownDate - now;
               
+              if (distance < 0) {
+                timeElement.innerHTML = '<div class="end-msg">Celebration in progress! Bless the couple for a happy life!</div>';
+                return;
+              }
+              
+              // Time calculations for days, hours, minutes and seconds
               var days = Math.floor(distance / (1000 * 60 * 60 * 24));
               var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
               var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
               var seconds = Math.floor((distance % (1000 * 60)) / 1000);
               
-              timeElement.innerHTML = "<div class='container'><div class='days block'>"+ days + "<br>Days</div>" + 
-                                     "<div class='hours block'>" + hours + "<br>Hours</div>" + 
-                                     "<div class='minutes block'>" + minutes + "<br>Minutes</div>" + 
-                                     "<div class='seconds block'>" + seconds + "<br>Seconds</div></div>";
+              // Format values to have leading zeros if needed
+              days = days.toString().padStart(2, '0');
+              hours = hours.toString().padStart(2, '0');
+              minutes = minutes.toString().padStart(2, '0');
+              seconds = seconds.toString().padStart(2, '0');
               
-              if (distance < 0) {
-                timeElement.innerHTML = "Celebration in progress! Bless the couple for a happy life!";
-                return;
-              }
+              // Update each digit with animation
+              updateDigitWithAnimation('#days-tens', days[0]);
+              updateDigitWithAnimation('#days-ones', days[1]);
+              updateDigitWithAnimation('#hours-tens', hours[0]);
+              updateDigitWithAnimation('#hours-ones', hours[1]);
+              updateDigitWithAnimation('#minutes-tens', minutes[0]);
+              updateDigitWithAnimation('#minutes-ones', minutes[1]);
+              updateDigitWithAnimation('#seconds-tens', seconds[0]);
+              updateDigitWithAnimation('#seconds-ones', seconds[1]);
               
               setTimeout(updateCountdown, 1000);
+            }
+            
+            // Function to update digits with animation
+            function updateDigitWithAnimation(selector, newValue) {
+              const digitElement = document.querySelector(`${selector} .digit`);
+              const currentValue = digitElement.textContent;
+              
+              if (currentValue !== newValue) {
+                // Only add the flip class if not already animating
+                if (!digitElement.classList.contains('flip')) {
+                  // Store the current value as a data attribute for animation
+                  digitElement.setAttribute('data-before', currentValue);
+                  
+                  // Add flip class for animation
+                  digitElement.classList.add('flip');
+                  
+                  // After animation completes, update the value and remove class
+                  setTimeout(() => {
+                    digitElement.textContent = newValue;
+                    digitElement.classList.remove('flip');
+                  }, 300); // Exactly 300ms to match the CSS transition timing
+                }
+              }
             }
             
             updateCountdown();

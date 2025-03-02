@@ -28,10 +28,17 @@ $(document).on('click', function(){
 // Countdown Timer
 document.addEventListener('DOMContentLoaded', function() {
     try {
-        // Set the date we're counting down to
-        var countDownDate = new Date("Mar 11, 2025 20:00:00").getTime();
+        // Set the date we're counting down to using a more precise date constructor
+        // Use UTC time to avoid timezone issues
+        var weddingDate = new Date();
+        weddingDate.setUTCFullYear(2025);
+        weddingDate.setUTCMonth(2); // March is 2 (zero-based)
+        weddingDate.setUTCDate(11);
+        weddingDate.setUTCHours(14, 30, 0, 0); // Convert 8:00 PM IST to UTC (UTC+5:30)
+        var countDownDate = weddingDate.getTime();
 
-        console.log("Countdown initialized for:", new Date(countDownDate));
+        console.log("Countdown initialized for:", new Date(countDownDate).toUTCString());
+        console.log("Days until wedding:", Math.floor((countDownDate - new Date().getTime()) / (1000 * 60 * 60 * 24)));
         
         // Get the timer element
         var timerElement = document.getElementById("time");
@@ -40,6 +47,54 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error("Timer element not found!");
             return;
         }
+        
+        // Create flip clock HTML structure
+        function createFlipClock() {
+            return `<div class="flip-clock">
+                <div class="flip-unit-container">
+                    <div class="flip-unit" id="days-tens">
+                        <div class="digit">0</div>
+                    </div>
+                    <div class="flip-unit" id="days-ones">
+                        <div class="digit">0</div>
+                    </div>
+                    <div class="unit-label">days</div>
+                </div>
+                <div class="time-separator">:</div>
+                <div class="flip-unit-container">
+                    <div class="flip-unit" id="hours-tens">
+                        <div class="digit">0</div>
+                    </div>
+                    <div class="flip-unit" id="hours-ones">
+                        <div class="digit">0</div>
+                    </div>
+                    <div class="unit-label">hours</div>
+                </div>
+                <div class="time-separator">:</div>
+                <div class="flip-unit-container">
+                    <div class="flip-unit" id="minutes-tens">
+                        <div class="digit">0</div>
+                    </div>
+                    <div class="flip-unit" id="minutes-ones">
+                        <div class="digit">0</div>
+                    </div>
+                    <div class="unit-label">min</div>
+                </div>
+                <div class="time-separator">:</div>
+                <div class="flip-unit-container">
+                    <div class="flip-unit" id="seconds-tens">
+                        <div class="digit">0</div>
+                    </div>
+                    <div class="flip-unit" id="seconds-ones">
+                        <div class="digit">0</div>
+                    </div>
+                    <div class="unit-label">sec</div>
+                </div>
+            </div>`;
+        }
+        
+        // Initialize flip clock
+        timerElement.innerHTML = createFlipClock();
         
         // Update the count down every 1 second
         var x = setInterval(function() {
@@ -55,29 +110,52 @@ document.addEventListener('DOMContentLoaded', function() {
             var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
             
-            // Output the result in an element with id="time"
-            timerElement.innerHTML = "<div class='container'><div class='days block'>"+ days + "<br>Days</div>" + "<div class='hours block'>" + hours + "<br>Hours</div>" + "<div class='minutes block'>" + minutes + "<br>Minutes</div>" + "<div class='seconds block'>" + seconds + "<br>Seconds</div></div>";
+            // Format values to have leading zeros if needed
+            days = days.toString().padStart(2, '0');
+            hours = hours.toString().padStart(2, '0');
+            minutes = minutes.toString().padStart(2, '0');
+            seconds = seconds.toString().padStart(2, '0');
             
-            console.log("Countdown updated:", days, "days", hours, "hours", minutes, "minutes", seconds, "seconds");
+            // Update each digit with animation
+            updateDigitWithAnimation('#days-tens', days[0]);
+            updateDigitWithAnimation('#days-ones', days[1]);
+            updateDigitWithAnimation('#hours-tens', hours[0]);
+            updateDigitWithAnimation('#hours-ones', hours[1]);
+            updateDigitWithAnimation('#minutes-tens', minutes[0]);
+            updateDigitWithAnimation('#minutes-ones', minutes[1]);
+            updateDigitWithAnimation('#seconds-tens', seconds[0]);
+            updateDigitWithAnimation('#seconds-ones', seconds[1]);
             
             // If the count down is over, write some text 
             if (distance < 0) {
                 clearInterval(x);
-                timerElement.innerHTML = "Celebration in progress! Bless the couple for a happy life!";
+                timerElement.innerHTML = '<div class="end-msg">Celebration in progress! Bless the couple for a happy life!</div>';
             }
         }, 1000);
         
-        // Run it once immediately to avoid delay
-        if (timerElement) {
-            var now = new Date().getTime();
-            var distance = countDownDate - now;
-            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        // Function to update digits with animation
+        function updateDigitWithAnimation(selector, newValue) {
+            const digitElement = document.querySelector(`${selector} .digit`);
+            const currentValue = digitElement.textContent;
             
-            timerElement.innerHTML = "<div class='container'><div class='days block'>"+ days + "<br>Days</div>" + "<div class='hours block'>" + hours + "<br>Hours</div>" + "<div class='minutes block'>" + minutes + "<br>Minutes</div>" + "<div class='seconds block'>" + seconds + "<br>Seconds</div></div>";
+            if (currentValue !== newValue) {
+                // Only add the flip class if not already animating
+                if (!digitElement.classList.contains('flip')) {
+                    // Store the current value for the animation
+                    digitElement.setAttribute('data-before', currentValue);
+                    
+                    // Add flip class for animation
+                    digitElement.classList.add('flip');
+                    
+                    // After animation completes, update the value and remove class
+                    setTimeout(() => {
+                        digitElement.textContent = newValue;
+                        digitElement.classList.remove('flip');
+                    }, 300); // Exactly 300ms to match the CSS transition timing
+                }
+            }
         }
+        
     } catch (error) {
         console.error("Error in countdown script:", error);
         // Display a fallback message if there's an error

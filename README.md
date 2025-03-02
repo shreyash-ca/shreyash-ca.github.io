@@ -26,20 +26,20 @@ inviting you and your family to elder sister's wedding to be held on **29th Nove
 
 ```js
 
-const newCouple = 'Sonali & Gagan';
+const newCouple = 'Shreya & Ashutosh'
 
 // Nov 29, 2020
 const weddingDate = new Date(2020, 11, 29);
 
 // Wedding venue: https://goo.gl/maps/5z5xX2hTYzU8VGEJ9
-const weddingVenue = new Location('Ashirwad Garden, Ranchi');
+const weddingVenue = new Location('Hotel Rama Continental, Prayagraj');
 
 (function() {
     newCouple.willTieKnot(weddingDate);
 
     // your presence is requested
     (new Wedding()).acceptInvitation(
-        window.open('https://sonali.netlify.app/')
+        window.open('https://shreyas-ca.github.io/')
     );
 })();
 

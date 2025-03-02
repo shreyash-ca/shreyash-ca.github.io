@@ -27,90 +27,135 @@ $(document).on('click', function(){
 
 // Countdown Timer
 document.addEventListener('DOMContentLoaded', function() {
-    try {
-        // Set the wedding date - March 11, 2025 at 8:00 PM IST
-        // Using ISO 8601 format for maximum compatibility
-        var weddingDate = new Date('2025-03-11T20:00:00+05:30');
-        var countDownDate = weddingDate.getTime();
+    // Add global error handler for debugging on GitHub Pages
+    window.onerror = function(message, source, lineno, colno, error) {
+        console.error('Countdown error:', message, 'at', source, lineno, colno);
+        console.error(error);
         
-        console.log("Countdown target date:", weddingDate.toString());
-        console.log("Current date:", new Date().toString());
-        console.log("Milliseconds until wedding:", countDownDate - new Date().getTime());
+        // Display fallback on any error
+        var timerElement = document.getElementById("time");
+        if (timerElement) {
+            timerElement.innerHTML = "Counting down to our wedding on March 11, 2025!";
+        }
+        return true; // Prevents default error handling
+    };
+    
+    try {
+        console.log("Initializing countdown...");
+        
+        // Set the wedding date - March 11, 2025 at 8:00 PM IST
+        // Using hardcoded timestamp to avoid date parsing issues
+        var countDownDate = new Date(2025, 2, 11, 20, 0, 0, 0).getTime(); // Month is 0-indexed
+        
+        // Manual calculation of time remaining (for debugging)
+        var now = new Date().getTime();
+        var rawDistance = countDownDate - now;
+        var rawDays = Math.floor(rawDistance / (1000 * 60 * 60 * 24));
+        
+        console.log("Countdown details:");
+        console.log("- Target date milliseconds:", countDownDate);
+        console.log("- Current date milliseconds:", now);
+        console.log("- Raw days remaining:", rawDays);
+        console.log("- Target date string:", new Date(countDownDate).toString());
+        console.log("- Current date string:", new Date().toString());
         
         // Get the timer element
         var timerElement = document.getElementById("time");
         
         if (!timerElement) {
-            console.error("Timer element not found!");
-            return;
+            throw new Error("Timer element not found");
         }
         
-        // Create a simpler countdown display without flip animations
-        function createCountdownDisplay() {
+        // Super simple HTML for countdown to minimize errors
+        function createSimpleCountdown() {
             return `<div class="simple-countdown">
                 <div class="countdown-segment">
-                    <div class="countdown-value" id="days-value">00</div>
+                    <div class="countdown-value" id="days-value">--</div>
                     <div class="countdown-label">days</div>
                 </div>
                 <div class="countdown-separator">:</div>
                 <div class="countdown-segment">
-                    <div class="countdown-value" id="hours-value">00</div>
+                    <div class="countdown-value" id="hours-value">--</div>
                     <div class="countdown-label">hours</div>
                 </div>
                 <div class="countdown-separator">:</div>
                 <div class="countdown-segment">
-                    <div class="countdown-value" id="minutes-value">00</div>
+                    <div class="countdown-value" id="minutes-value">--</div>
                     <div class="countdown-label">min</div>
                 </div>
                 <div class="countdown-separator">:</div>
                 <div class="countdown-segment">
-                    <div class="countdown-value" id="seconds-value">00</div>
+                    <div class="countdown-value" id="seconds-value">--</div>
                     <div class="countdown-label">sec</div>
                 </div>
             </div>`;
         }
         
         // Initialize countdown display
-        timerElement.innerHTML = createCountdownDisplay();
+        timerElement.innerHTML = createSimpleCountdown();
+        
+        // Make sure all elements exist before starting countdown
+        var daysElement = document.getElementById("days-value");
+        var hoursElement = document.getElementById("hours-value");
+        var minutesElement = document.getElementById("minutes-value");
+        var secondsElement = document.getElementById("seconds-value");
+        
+        if (!daysElement || !hoursElement || !minutesElement || !secondsElement) {
+            throw new Error("Countdown elements not found");
+        }
+        
+        console.log("Countdown elements initialized successfully");
+        
+        // Function to add leading zero (no dependency on padStart)
+        function padZero(num) {
+            return (num < 10) ? "0" + num : num.toString();
+        }
         
         // Update the count down every 1 second
-        var x = setInterval(function() {
-            // Get today's date and time
-            var now = new Date().getTime();
-            
-            // Find the distance between now and the count down date
-            var distance = countDownDate - now;
-            
-            // Time calculations for days, hours, minutes and seconds
-            var days = Math.max(0, Math.floor(distance / (1000 * 60 * 60 * 24)));
-            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
-            // Format values to have leading zeros if needed
-            var daysFormatted = days.toString().padStart(2, '0');
-            var hoursFormatted = hours.toString().padStart(2, '0');
-            var minutesFormatted = minutes.toString().padStart(2, '0');
-            var secondsFormatted = seconds.toString().padStart(2, '0');
-            
-            // Debug output to console
-            console.log("Time remaining:", { days: daysFormatted, hours: hoursFormatted, minutes: minutesFormatted, seconds: secondsFormatted });
-            
-            // Update the elements directly without animations
-            document.getElementById("days-value").textContent = daysFormatted;
-            document.getElementById("hours-value").textContent = hoursFormatted;
-            document.getElementById("minutes-value").textContent = minutesFormatted;
-            document.getElementById("seconds-value").textContent = secondsFormatted;
-            
-            // If the count down is over, show message
-            if (distance < 0) {
-                clearInterval(x);
-                timerElement.innerHTML = '<div class="end-msg">Celebration in progress! Bless the couple for a happy life!</div>';
+        var countdownInterval = setInterval(function() {
+            try {
+                // Get today's date and time
+                var now = new Date().getTime();
+                
+                // Find the distance between now and the count down date
+                var distance = countDownDate - now;
+                
+                // If the countdown is over
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    timerElement.innerHTML = '<div class="end-msg">Celebration in progress! Bless the couple for a happy life!</div>';
+                    return;
+                }
+                
+                // Time calculations
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                // Format with leading zeros
+                var daysFormatted = padZero(days);
+                var hoursFormatted = padZero(hours);
+                var minutesFormatted = padZero(minutes);
+                var secondsFormatted = padZero(seconds);
+                
+                // Update elements (with error handling)
+                daysElement.textContent = daysFormatted;
+                hoursElement.textContent = hoursFormatted;
+                minutesElement.textContent = minutesFormatted;
+                secondsElement.textContent = secondsFormatted;
+                
+            } catch (error) {
+                console.error("Error in countdown interval:", error);
+                clearInterval(countdownInterval);
+                
+                // Show static message on error
+                timerElement.innerHTML = "Counting down to our wedding on March 11, 2025!";
             }
         }, 1000);
         
     } catch (error) {
-        console.error("Error in countdown script:", error);
+        console.error("Error in countdown initialization:", error);
         // Display a fallback message if there's an error
         var timerElement = document.getElementById("time");
         if (timerElement) {

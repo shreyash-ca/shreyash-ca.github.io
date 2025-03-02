@@ -5,14 +5,14 @@
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
       <meta name="description"
-         content="With the divine grace of the almighty, inviting you and your family to Shreya's wedding to be held on 11th March at Hotel Rama Continental, Prayagraj from 8:00 PM onwards.">
+         content="With the divine grace of the almighty, inviting you and your family to Shreya and Ashutosh's wedding to be held on 11th March at Hotel Rama Continental, Prayagraj from 8:00 PM onwards.">
       <meta name="author" content="Vinit Shahdeo">
       <meta name="email" content="vinitshahdeo@gmail.com">
       <meta name="copyright" content="Vinit Shahdeo 2020" />
       <meta property="og:type" content="website" />
       <meta property="og:title" content="Wedding Invitation | 11th Mar | Hotel Rama Continental, Prayagraj" />
       <meta property="og:description"
-         content="With the divine grace of the almighty, inviting you and your family to Shreya's wedding to be held on 11th March at Hotel Rama Continental, Prayagraj from 8:00 PM onwards." />
+         content="With the divine grace of the almighty, inviting you and your family to Shreya and Ashutosh's wedding to be held on 11th March at Hotel Rama Continental, Prayagraj from 8:00 PM onwards." />
       <meta property="og:image" content="https://raw.githubusercontent.com/vinitshahdeo/vinitshahdeo/master/images/sonali.jpeg" />
       <meta property="og:url" content="" />
       <meta property="og:site_name" content="Wedding Invitation | 11th Mar" />
@@ -20,7 +20,7 @@
       <meta name="twitter:site" content="Wedding Invitation | 11th Mar">
       <meta name="twitter:title" content="Wedding Invitation | 11th Mar">
       <meta name="twitter:description"
-         content="With the divine grace of the almighty, inviting you and your family to Shreya's wedding to be held on 11th March at Hotel Rama Continental, Prayagraj from 8:00 PM onwards.">
+         content="With the divine grace of the almighty, inviting you and your family to Shreya and Ashutosh's wedding to be held on 11th March at Hotel Rama Continental, Prayagraj from 8:00 PM onwards.">
       <meta name="twitter:creator" content="@Vinit_Shahdeo">
       <meta name="twitter:image" content="https://raw.githubusercontent.com/vinitshahdeo/vinitshahdeo/master/images/sonali.jpeg">
 
@@ -94,78 +94,78 @@
         // Check if countdown is working after 3 seconds
         setTimeout(function() {
           var timeElement = document.getElementById('time');
-          if (timeElement && timeElement.innerHTML === 'Loading countdown...') {
-            console.log('Countdown not working, applying fallback');
+          if (timeElement && (timeElement.innerHTML === 'Loading countdown...' || timeElement.textContent.indexOf('--') !== -1)) {
+            console.log('Primary countdown not working, applying fallback');
             
-            // Simpler date format for consistent parsing
-            var weddingDate = new Date('2025-03-11T20:00:00+05:30');
-            var countDownDate = weddingDate.getTime();
-            
-            console.log("Fallback countdown target date:", weddingDate.toString());
-            console.log("Current date (fallback):", new Date().toString());
-            
-            // Create simpler countdown display without animations
-            function createCountdownDisplay() {
-                return `<div class="simple-countdown">
-                    <div class="countdown-segment">
-                        <div class="countdown-value" id="days-value">00</div>
-                        <div class="countdown-label">days</div>
-                    </div>
-                    <div class="countdown-separator">:</div>
-                    <div class="countdown-segment">
-                        <div class="countdown-value" id="hours-value">00</div>
-                        <div class="countdown-label">hours</div>
-                    </div>
-                    <div class="countdown-separator">:</div>
-                    <div class="countdown-segment">
-                        <div class="countdown-value" id="minutes-value">00</div>
-                        <div class="countdown-label">min</div>
-                    </div>
-                    <div class="countdown-separator">:</div>
-                    <div class="countdown-segment">
-                        <div class="countdown-value" id="seconds-value">00</div>
-                        <div class="countdown-label">sec</div>
-                    </div>
-                </div>`;
-            }
-            
-            // Initialize countdown display
-            timeElement.innerHTML = createCountdownDisplay();
-            
-            function updateCountdown() {
-              var now = new Date().getTime();
-              var distance = countDownDate - now;
+            try {
+              // Hardcoded date calculation to avoid parsing issues
+              var countDownDate = new Date(2025, 2, 11, 20, 0, 0, 0).getTime(); // Month is 0-indexed
               
-              if (distance < 0) {
-                timeElement.innerHTML = '<div class="end-msg">Celebration in progress! Bless the couple for a happy life!</div>';
-                return;
+              console.log("Fallback countdown initialized:");
+              console.log("- Target timestamp:", countDownDate);
+              console.log("- Target date:", new Date(countDownDate).toString());
+              
+              // Simple formatting function that doesn't rely on modern JS features
+              function padZero(num) {
+                return (num < 10) ? "0" + num : num.toString();
               }
               
-              // Time calculations for days, hours, minutes and seconds
-              var days = Math.max(0, Math.floor(distance / (1000 * 60 * 60 * 24)));
-              var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-              var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-              var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+              // Create very simple HTML structure
+              timeElement.innerHTML = '<div class="simple-countdown">' +
+                '<div class="countdown-segment"><div class="countdown-value" id="fb-days">--</div><div class="countdown-label">days</div></div>' +
+                '<div class="countdown-separator">:</div>' +
+                '<div class="countdown-segment"><div class="countdown-value" id="fb-hours">--</div><div class="countdown-label">hours</div></div>' +
+                '<div class="countdown-separator">:</div>' +
+                '<div class="countdown-segment"><div class="countdown-value" id="fb-minutes">--</div><div class="countdown-label">min</div></div>' +
+                '<div class="countdown-separator">:</div>' +
+                '<div class="countdown-segment"><div class="countdown-value" id="fb-seconds">--</div><div class="countdown-label">sec</div></div>' +
+                '</div>';
               
-              // Format values to have leading zeros if needed
-              var daysFormatted = days.toString().padStart(2, '0');
-              var hoursFormatted = hours.toString().padStart(2, '0');
-              var minutesFormatted = minutes.toString().padStart(2, '0');
-              var secondsFormatted = seconds.toString().padStart(2, '0');
+              var daysElement = document.getElementById('fb-days');
+              var hoursElement = document.getElementById('fb-hours');
+              var minutesElement = document.getElementById('fb-minutes');
+              var secondsElement = document.getElementById('fb-seconds');
               
-              // Debug info
-              console.log("Fallback time remaining:", { days: daysFormatted, hours: hoursFormatted, minutes: minutesFormatted, seconds: secondsFormatted });
+              if (!daysElement || !hoursElement || !minutesElement || !secondsElement) {
+                throw new Error("Could not find fallback countdown elements");
+              }
               
-              // Direct update without animations
-              document.getElementById("days-value").textContent = daysFormatted;
-              document.getElementById("hours-value").textContent = hoursFormatted;
-              document.getElementById("minutes-value").textContent = minutesFormatted;
-              document.getElementById("seconds-value").textContent = secondsFormatted;
+              function updateFallbackCountdown() {
+                try {
+                  var now = new Date().getTime();
+                  var distance = countDownDate - now;
+                  
+                  if (distance < 0) {
+                    timeElement.innerHTML = '<div class="end-msg">Celebration in progress! Bless the couple for a happy life!</div>';
+                    return;
+                  }
+                  
+                  // Simple time calculations
+                  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                  
+                  // Manual formatting
+                  daysElement.textContent = padZero(days);
+                  hoursElement.textContent = padZero(hours);
+                  minutesElement.textContent = padZero(minutes);
+                  secondsElement.textContent = padZero(seconds);
+                  
+                  setTimeout(updateFallbackCountdown, 1000);
+                } catch (error) {
+                  console.error("Error in fallback countdown update:", error);
+                  timeElement.innerHTML = "Counting down to our wedding on March 11, 2025!";
+                }
+              }
               
-              setTimeout(updateCountdown, 1000);
+              // Start the fallback countdown
+              updateFallbackCountdown();
+              
+            } catch (error) {
+              console.error("Error setting up fallback countdown:", error);
+              timeElement.innerHTML = "Counting down to our wedding on March 11, 2025!";
             }
-            
-            updateCountdown();
           }
         }, 3000);
       </script>

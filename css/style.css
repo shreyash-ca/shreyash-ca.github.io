@@ -574,6 +574,68 @@ a {
 
 .actions {
 	display: flex;
-	font-size: 12px;
-	letter-spacing: 0pt;
+	flex-direction: column;
+	align-items: center;
+	margin-bottom: 30px;
+	margin-top: 30px;
+}
+
+/* Invitation Gallery Styles */
+.invitation-gallery {
+	width: 100%;
+	max-width: 1200px;
+	margin: 30px auto;
+	text-align: center;
+	padding: 0 20px;
+}
+
+.invitation-gallery h3 {
+	font-family: 'Dancing Script', cursive;
+	font-weight: bold;
+	font-size: 28px;
+	margin-bottom: 20px;
+	color: #674ea7;
+}
+
+.gallery-container {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 20px;
+}
+
+.gallery-item {
+	flex: 0 0 auto;
+	max-width: 450px;
+	margin-bottom: 20px;
+	transition: transform 0.3s ease;
+	box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.gallery-item:hover {
+	transform: translateY(-5px);
+}
+
+.invitation-image {
+	width: 100%;
+	height: auto;
+	display: block;
+	border-radius: 8px 8px 0 0;
+}
+
+.gallery-item p {
+	padding: 10px;
+	margin: 0;
+	background-color: #fff;
+	color: #674ea7;
+	font-family: 'Arvo', serif;
+	font-size: 16px;
+}
+
+@media (max-width: 768px) {
+	.gallery-item {
+		max-width: 100%;
+	}
 }

@@ -49,7 +49,7 @@
          </div>
       </div>
       <h3 class="countdown-title">Counting Down to Our Special Day</h3>
-      <div id="time"></div>
+      <div id="time">Loading countdown...</div>
       <p class="dance-med">
          dinner & dancing to follow
       </p>
@@ -88,6 +88,43 @@
       <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js'></script>
       <script src='https://cdn.jsdelivr.net/gh/timoschaefer/jQuery-Sakura/jquery-sakura.min.js'></script>
       <script  src="./js/script.js"></script>
+      
+      <!-- Fallback script for countdown if main script fails -->
+      <script>
+        // Check if countdown is working after 3 seconds
+        setTimeout(function() {
+          var timeElement = document.getElementById('time');
+          if (timeElement && timeElement.innerHTML === 'Loading countdown...') {
+            console.log('Countdown not working, applying fallback');
+            // Simple fallback countdown
+            var countDownDate = new Date("Mar 11, 2025 20:00:00").getTime();
+            
+            function updateCountdown() {
+              var now = new Date().getTime();
+              var distance = countDownDate - now;
+              
+              var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+              var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+              var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+              var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+              
+              timeElement.innerHTML = "<div class='container'><div class='days block'>"+ days + "<br>Days</div>" + 
+                                     "<div class='hours block'>" + hours + "<br>Hours</div>" + 
+                                     "<div class='minutes block'>" + minutes + "<br>Minutes</div>" + 
+                                     "<div class='seconds block'>" + seconds + "<br>Seconds</div></div>";
+              
+              if (distance < 0) {
+                timeElement.innerHTML = "Celebration in progress! Bless the couple for a happy life!";
+                return;
+              }
+              
+              setTimeout(updateCountdown, 1000);
+            }
+            
+            updateCountdown();
+          }
+        }, 3000);
+      </script>
    </body>
 <!---
    _____                     __  __            ____        __     

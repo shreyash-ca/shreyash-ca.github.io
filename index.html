@@ -97,15 +97,11 @@
           if (timeElement && timeElement.innerHTML === 'Loading countdown...') {
             console.log('Countdown not working, applying fallback');
             
-            // Use the same date calculation as the main script
-            var weddingDate = new Date();
-            weddingDate.setUTCFullYear(2025);
-            weddingDate.setUTCMonth(2); // March is 2 (zero-based)
-            weddingDate.setUTCDate(11);
-            weddingDate.setUTCHours(14, 30, 0, 0); // Convert 8:00 PM IST to UTC (UTC+5:30)
-            var countDownDate = weddingDate.getTime();
+            // Use the same direct date constructor as the main script
+            var countDownDate = new Date('March 11, 2025 20:00:00 GMT+0530').getTime();
             
-            console.log("Fallback countdown initialized for:", new Date(countDownDate).toUTCString());
+            console.log("Fallback countdown target date:", new Date(countDownDate).toString());
+            console.log("Current date:", new Date().toString());
             console.log("Days until wedding (fallback):", Math.floor((countDownDate - new Date().getTime()) / (1000 * 60 * 60 * 24)));
             
             // Create flip clock HTML structure
@@ -177,7 +173,17 @@
               minutes = minutes.toString().padStart(2, '0');
               seconds = seconds.toString().padStart(2, '0');
               
-              // Update each digit with animation
+              // Update each digit directly first to ensure display, then animate
+              document.querySelector('#days-tens .digit').textContent = days[0];
+              document.querySelector('#days-ones .digit').textContent = days[1];
+              document.querySelector('#hours-tens .digit').textContent = hours[0];
+              document.querySelector('#hours-ones .digit').textContent = hours[1];
+              document.querySelector('#minutes-tens .digit').textContent = minutes[0];
+              document.querySelector('#minutes-ones .digit').textContent = minutes[1];
+              document.querySelector('#seconds-tens .digit').textContent = seconds[0];
+              document.querySelector('#seconds-ones .digit').textContent = seconds[1];
+              
+              // Then apply animations after ensuring display
               updateDigitWithAnimation('#days-tens', days[0]);
               updateDigitWithAnimation('#days-ones', days[1]);
               updateDigitWithAnimation('#hours-tens', hours[0]);

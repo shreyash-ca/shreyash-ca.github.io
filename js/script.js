@@ -28,16 +28,14 @@ $(document).on('click', function(){
 // Countdown Timer
 document.addEventListener('DOMContentLoaded', function() {
     try {
-        // Set the date we're counting down to using a more precise date constructor
-        // Use UTC time to avoid timezone issues
-        var weddingDate = new Date();
-        weddingDate.setUTCFullYear(2025);
-        weddingDate.setUTCMonth(2); // March is 2 (zero-based)
-        weddingDate.setUTCDate(11);
-        weddingDate.setUTCHours(14, 30, 0, 0); // Convert 8:00 PM IST to UTC (UTC+5:30)
-        var countDownDate = weddingDate.getTime();
-
-        console.log("Countdown initialized for:", new Date(countDownDate).toUTCString());
+        // Set the wedding date - March 11, 2025 at 8:00 PM IST
+        // Using direct date constructor to avoid timezone issues
+        var countDownDate = new Date('March 11, 2025 20:00:00 GMT+0530').getTime();
+        
+        // Log for debugging
+        console.log("Countdown target date:", new Date(countDownDate).toString());
+        console.log("Current date:", new Date().toString());
+        console.log("Raw milliseconds until wedding:", countDownDate - new Date().getTime());
         console.log("Days until wedding:", Math.floor((countDownDate - new Date().getTime()) / (1000 * 60 * 60 * 24)));
         
         // Get the timer element
@@ -110,13 +108,26 @@ document.addEventListener('DOMContentLoaded', function() {
             var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
             
+            // For debugging
+            console.log("Countdown values:", { days, hours, minutes, seconds });
+            
             // Format values to have leading zeros if needed
             days = days.toString().padStart(2, '0');
             hours = hours.toString().padStart(2, '0');
             minutes = minutes.toString().padStart(2, '0');
             seconds = seconds.toString().padStart(2, '0');
             
-            // Update each digit with animation
+            // Update each digit directly first to ensure display, then animate
+            document.querySelector('#days-tens .digit').textContent = days[0];
+            document.querySelector('#days-ones .digit').textContent = days[1];
+            document.querySelector('#hours-tens .digit').textContent = hours[0];
+            document.querySelector('#hours-ones .digit').textContent = hours[1];
+            document.querySelector('#minutes-tens .digit').textContent = minutes[0];
+            document.querySelector('#minutes-ones .digit').textContent = minutes[1];
+            document.querySelector('#seconds-tens .digit').textContent = seconds[0];
+            document.querySelector('#seconds-ones .digit').textContent = seconds[1];
+            
+            // Then apply animations after ensuring display
             updateDigitWithAnimation('#days-tens', days[0]);
             updateDigitWithAnimation('#days-ones', days[1]);
             updateDigitWithAnimation('#hours-tens', hours[0]);
